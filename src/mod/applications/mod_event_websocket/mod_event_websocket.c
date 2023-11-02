@@ -45,10 +45,15 @@ SWITCH_MODULE_DEFINITION(mod_event_websocket, mod_event_websocket_load, mod_even
 // #define _switch_stun_packet_next_attribute(attribute, end) (attribute && (attribute = (switch_stun_packet_attribute_t
 // *) (attribute->value +  _switch_stun_attribute_padded_length(attribute))) && ((void *)attribute < end) && ((void
 // *)(attribute +  _switch_stun_attribute_padded_length(attribute)) < end))
+SWITCH_STANDARD_API(websocket_function) { return SWITCH_STATUS_SUCCESS; }
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_event_websocket_load)
 {
+	switch_api_interface_t *api_interface;
+	*module_interface = switch_loadable_module_create_module_interface(pool, modname);
+
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Hello World Kiennt!\n");
+	SWITCH_ADD_API(api_interface, "websocket", "Websocket API", websocket_function, "syntax");
 
 	/* indicate that the module should continue to be loaded */
 	return SWITCH_STATUS_SUCCESS;
