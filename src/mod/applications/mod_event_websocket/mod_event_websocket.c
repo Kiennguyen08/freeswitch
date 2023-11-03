@@ -74,24 +74,9 @@ struct WebSocketClient {
 
 struct WebSocketClient *clients = NULL;
 
-static int event_socket = socket(AF_INET, SOCK_STREAM, 0);
+static int event_socket = -1;
 
-static struct lws_protocols protocols[] = {
-	/* The first protocol must always be the HTTP handler */
-	{
-		"http-only",   /* name */
-		callback_http, /* callback */
-		0,			   /* No per session data. */
-		0,			   /* max frame size / rx buffer */
-	},
-	{
-		"example-protocol",
-		callback_websocket,
-		0,
-		EXAMPLE_RX_BUFFER_BYTES,
-	},
-	{NULL, NULL, 0, 0} /* terminator */
-};
+struct lws_context *context;
 
 // Function to send a command to the event socket
 void send_command(int socket, const char *command)
@@ -174,8 +159,8 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		// For example: forward_to_client("client123", (const char *)in);
 		memcpy(&received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], in, len);
 		received_payload.len = len;
-		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%d]", len);
-		send_command(event_socket, received_payload.data);
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
+		send_command(event_socket, (char *)&received_payload.data);
 		break;
 	case LWS_CALLBACK_SERVER_WRITEABLE:
 		lws_write(wsi, &received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], received_payload.len, LWS_WRITE_TEXT);
@@ -190,6 +175,23 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 
 	return 0;
 }
+
+static struct lws_protocols protocols[] = {
+	/* The first protocol must always be the HTTP handler */
+	{
+		"http-only",   /* name */
+		callback_http, /* callback */
+		0,			   /* No per session data. */
+		0,			   /* max frame size / rx buffer */
+	},
+	{
+		"example-protocol",
+		callback_websocket,
+		0,
+		EXAMPLE_RX_BUFFER_BYTES,
+	},
+	{NULL, NULL, 0, 0} /* terminator */
+};
 
 static void *event_socket_thread(void *arg)
 {
@@ -224,7 +226,7 @@ static void *event_socket_thread(void *arg)
 
 		// Process and forward the received data to WebSocket clients
 		// Here, you should send the data over WebSocket to the connected clients
-		forward_to_all_clients(buffer)
+		forward_to_all_clients(buffer);
 	}
 
 	// Close the event socket connection
@@ -240,7 +242,8 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_event_websocket_load)
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Hello World Kiennt Websocket!\n");
 	SWITCH_ADD_API(api_interface, "websocket", "Websocket API", websocket_function, "syntax");
-
+	// Initialize the socket
+	event_socket = socket(AF_INET, SOCK_STREAM, 0);
 	/* indicate that the module should continue to be loaded */
 	return SWITCH_STATUS_SUCCESS;
 }
