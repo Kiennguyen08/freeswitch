@@ -264,6 +264,8 @@ SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_event_websocket_shutdown)
 */
 SWITCH_MODULE_RUNTIME_FUNCTION(mod_event_websocket_runtime)
 {
+	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Runtime Event Websocket...\n");
+
 	struct lws_context_creation_info info;
 	memset(&info, 0, sizeof info);
 
