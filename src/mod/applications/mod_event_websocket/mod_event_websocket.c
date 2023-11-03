@@ -274,8 +274,10 @@ SWITCH_MODULE_RUNTIME_FUNCTION(mod_event_websocket_runtime)
 	context = lws_create_context(&info);
 	if (!context) {
 		fprintf(stderr, "Error creating libwebsockets context\n");
+		switch_log_printf(WITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Error creating libwebsockets context\n");
 		return 1;
 	}
+	switch_log_printf(WITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Created libwebsockets context\n");
 
 	pthread_t event_socket_thread_id;
 	pthread_create(&event_socket_thread_id, NULL, event_socket_thread, NULL);
