@@ -52,7 +52,8 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_event_websocket_load);
 /* SWITCH_MODULE_DEFINITION(name, load, shutdown, runtime)
  * Defines a switch_loadable_module_function_table_t and a static const char[] modname
  */
-SWITCH_MODULE_DEFINITION(mod_event_websocket, mod_event_websocket_load, mod_event_websocket_shutdown, NULL);
+SWITCH_MODULE_DEFINITION(mod_event_websocket, mod_event_websocket_load, mod_event_websocket_shutdown,
+						 mod_event_websocket_runtime);
 
 // #define _switch_stun_packet_next_attribute(attribute, end) (attribute && (attribute = (switch_stun_packet_attribute_t
 // *) (attribute->value +  _switch_stun_attribute_padded_length(attribute))) && ((void *)attribute < end) && ((void
