@@ -40,7 +40,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define EXAMPLE_RX_BUFFER_BYTES (10)
+#define EXAMPLE_RX_BUFFER_BYTES (100)
 #define EVENT_SOCKET_HOST "127.0.0.1"
 #define EVENT_SOCKET_PORT 8021
 
@@ -158,6 +158,7 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		// Handle incoming WebSocket messages
 		// Forward messages to a specific client using the client ID
 		// For example: forward_to_client("client123", (const char *)in);
+		perror("Received websocket message");
 		memcpy(&received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], in, len);
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
