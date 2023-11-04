@@ -221,6 +221,7 @@ static void *event_socket_thread(void *arg)
 
 		// Receive data from the event socket
 		int bytes_received = receive_data(event_socket, buffer, sizeof(buffer));
+		fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
 		if (bytes_received > 0) {
 			// perror("Event socket receive_data() failed");
 
@@ -280,6 +281,7 @@ SWITCH_MODULE_RUNTIME_FUNCTION(mod_event_websocket_runtime)
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Error creating libwebsockets context\n");
 		return 1;
 	}
+	fprintf(stdout, "Created libwebsockets context\n");
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Created libwebsockets context\n");
 
 	pthread_t event_socket_thread_id;
