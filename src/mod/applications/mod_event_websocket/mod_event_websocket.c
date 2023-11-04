@@ -220,14 +220,13 @@ static void *event_socket_thread(void *arg)
 
 		// Receive data from the event socket
 		int bytes_received = receive_data(event_socket, buffer, sizeof(buffer));
-		if (bytes_received <= 0) {
-			perror("Event socket receive_data() failed");
-			break; // Handle disconnection or errors
-		}
+		if (bytes_received > 0) {
+			// perror("Event socket receive_data() failed");
 
-		// Process and forward the received data to WebSocket clients
-		// Here, you should send the data over WebSocket to the connected clients
-		forward_to_all_clients(buffer);
+			// Process and forward the received data to WebSocket clients
+			// Here, you should send the data over WebSocket to the connected clients
+			forward_to_all_clients(buffer);
+		}
 	}
 
 	// Close the event socket connection
