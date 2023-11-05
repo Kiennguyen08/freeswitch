@@ -184,6 +184,10 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		lws_hdr_copy(wsi, client_id, sizeof(client_id), WSI_TOKEN_HTTP_X_REAL_IP);
 		add_client(wsi, client_id);
 		fprintf(stderr, "WebSocket connection established with client_id %s\n", client_id);
+
+		pthread_t event_socket_thread_id;
+		pthread_create(&event_socket_thread_id, NULL, event_socket_thread, NULL);
+
 		break;
 	case LWS_CALLBACK_RECEIVE:
 		// Handle incoming WebSocket messages
@@ -326,8 +330,8 @@ SWITCH_MODULE_RUNTIME_FUNCTION(mod_event_websocket_runtime)
 	fprintf(stdout, "Created libwebsockets context\n");
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Created libwebsockets context\n");
 
-	pthread_t event_socket_thread_id;
-	pthread_create(&event_socket_thread_id, NULL, event_socket_thread, NULL);
+	// pthread_t event_socket_thread_id;
+	// pthread_create(&event_socket_thread_id, NULL, event_socket_thread, NULL);
 
 	while (1) {
 		lws_service(context, 50); // 50 ms timeout for handling WebSocket connections
