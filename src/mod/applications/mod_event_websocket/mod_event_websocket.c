@@ -82,6 +82,7 @@ struct lws_context *context;
 // Function to send a command to the event socket
 void send_command(int socket, const char *command)
 {
+	fprintf(stderr, "Command is sending to socket %s\n", command);
 	// Send the command to the event socket
 	write(socket, command, strlen(command));
 }
@@ -151,7 +152,7 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 	case LWS_CALLBACK_ESTABLISHED:
 		// Handle new WebSocket connections
 		// Extract the client ID from the connection request (if available)
-		lws_hdr_copy(wsi, client_id, sizeof(client_id), WSI_TOKEN_GET_URI);
+		lws_hdr_copy(wsi, client_id, sizeof(client_id), WSI_TOKEN_HTTP_X_REAL_IP);
 		add_client(wsi, client_id);
 		fprintf(stderr, "WebSocket connection established with client_id %s\n", client_id);
 		break;
