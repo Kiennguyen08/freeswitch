@@ -153,13 +153,14 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		// Extract the client ID from the connection request (if available)
 		lws_hdr_copy(wsi, client_id, sizeof(client_id), WSI_TOKEN_GET_URI);
 		add_client(wsi, client_id);
+		printf("WebSocket connection established with client_id %s\n", client_id);
 		break;
 	case LWS_CALLBACK_RECEIVE:
 		// Handle incoming WebSocket messages
 		// Forward messages to a specific client using the client ID
 		// For example: forward_to_client("client123", (const char *)in);
 		perror("Received websocket message");
-		fprintf(stdout, "Bytes received from Websocket message %lu\n", len);
+		fprintf(stdout, "Bytes received from Websocket message %.*s\n", (int)len, (char *)in);
 		memcpy(&received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], in, len);
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
@@ -191,7 +192,7 @@ static struct lws_protocols protocols[] = {
 		"example-protocol",
 		callback_websocket,
 		0,
-		EXAMPLE_RX_BUFFER_BYTES,
+		0,
 	},
 	{NULL, NULL, 0, 0} /* terminator */
 };
