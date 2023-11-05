@@ -174,6 +174,47 @@ char *sliceString(const char *original, int start, int length)
 	return sliced;
 }
 
+static void *event_socket_thread(void *arg)
+{
+	// Connect to the FreeSWITCH event socket
+	if (event_socket == -1) {
+		perror("Event socket socket() failed");
+		return NULL;
+	}
+
+	struct sockaddr_in server;
+	server.sin_addr.s_addr = inet_addr(EVENT_SOCKET_HOST);
+	server.sin_family = AF_INET;
+	server.sin_port = htons(EVENT_SOCKET_PORT);
+
+	if (connect(event_socket, (struct sockaddr *)&server, sizeof(server)) < 0) {
+		perror("Event socket connect() failed");
+		close(event_socket);
+		return NULL;
+	}
+
+	// Handle communication with the event socket
+	char buffer[1024];
+	while (1) {
+		// Your WebSocket server can send messages to the event socket using send_command
+
+		// Receive data from the event socket
+		int bytes_received = receive_data(event_socket, buffer, sizeof(buffer));
+		// fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
+		if (bytes_received > 0) {
+			// perror("Event socket receive_data() failed");
+			fprintf(stderr, "Bytes received from TCP Payload %d\n", bytes_received);
+			// Process and forward the received data to WebSocket clients
+			// Here, you should send the data over WebSocket to the connected clients
+			forward_to_all_clients(buffer);
+		}
+	}
+
+	// Close the event socket connection
+	close(event_socket);
+
+	return NULL;
+}
 static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
 {
 	char client_id[64];
@@ -240,48 +281,6 @@ static struct lws_protocols protocols[] = {
 	},
 	{NULL, NULL, 0, 0} /* terminator */
 };
-
-static void *event_socket_thread(void *arg)
-{
-	// Connect to the FreeSWITCH event socket
-	if (event_socket == -1) {
-		perror("Event socket socket() failed");
-		return NULL;
-	}
-
-	struct sockaddr_in server;
-	server.sin_addr.s_addr = inet_addr(EVENT_SOCKET_HOST);
-	server.sin_family = AF_INET;
-	server.sin_port = htons(EVENT_SOCKET_PORT);
-
-	if (connect(event_socket, (struct sockaddr *)&server, sizeof(server)) < 0) {
-		perror("Event socket connect() failed");
-		close(event_socket);
-		return NULL;
-	}
-
-	// Handle communication with the event socket
-	char buffer[1024];
-	while (1) {
-		// Your WebSocket server can send messages to the event socket using send_command
-
-		// Receive data from the event socket
-		int bytes_received = receive_data(event_socket, buffer, sizeof(buffer));
-		// fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
-		if (bytes_received > 0) {
-			// perror("Event socket receive_data() failed");
-			fprintf(stderr, "Bytes received from TCP Payload %d\n", bytes_received);
-			// Process and forward the received data to WebSocket clients
-			// Here, you should send the data over WebSocket to the connected clients
-			forward_to_all_clients(buffer);
-		}
-	}
-
-	// Close the event socket connection
-	close(event_socket);
-
-	return NULL;
-}
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_event_websocket_load)
 {
