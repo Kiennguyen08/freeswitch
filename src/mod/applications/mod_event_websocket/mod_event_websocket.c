@@ -80,7 +80,7 @@ static int event_socket = -1;
 struct lws_context *context;
 
 // Function to send a command to the event socket
-void send_command(int socket, const char *command)
+void send_command(int socket, char *command)
 {
 	fprintf(stderr, "Command is sending to socket %s\n", command);
 	// Send the command to the event socket
@@ -231,8 +231,8 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		pthread_create(&event_socket_thread_id, NULL, event_socket_thread, NULL);
 
 		// auto send auth message when ws connetion is established
-		const char *auth_message = "auth ClueCon";
-		send_command(event_socket, auth_message);
+		// const char *auth_message = "auth ClueCon";
+		// send_command(event_socket, auth_message);
 
 		break;
 	case LWS_CALLBACK_RECEIVE:
