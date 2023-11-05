@@ -85,7 +85,7 @@ void send_command(int socket, char *command)
 	fprintf(stderr, "Command is sending to socket %s\n", command);
 	// Send the command to the event socket
 	strcat(command, "\n");
-	write(socket, command, strlen(command));
+	write(socket, command, sizeof(command));
 }
 
 // Function to receive data from the event socket
