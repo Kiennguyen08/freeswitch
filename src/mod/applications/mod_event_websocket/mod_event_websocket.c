@@ -162,10 +162,13 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		// For example: forward_to_client("client123", (const char *)in);
 		perror("Received websocket message");
 		fprintf(stderr, "Bytes received from Websocket message %.*s\n", (int)len, (char *)in);
+
 		memcpy(&received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], in, len);
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
-		send_command(event_socket, (char *)&received_payload.data);
+
+		// send_command(event_socket, (char *)&received_payload.data);
+		send_command(event_socket, (char *)in);
 
 		// Dummy response for testing
 		char response_data[] = "Hello, client!";
