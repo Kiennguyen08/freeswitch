@@ -165,6 +165,11 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
 		send_command(event_socket, (char *)&received_payload.data);
+
+		// Dummy response for testing
+		char response_data[] = "Hello, client!";
+		int response_data_length = strlen(response_data);
+		lws_write(wsi, response_data, response_data_length, LWS_WRITE_TEXT);
 		break;
 	case LWS_CALLBACK_SERVER_WRITEABLE:
 		lws_write(wsi, &received_payload.data[LWS_SEND_BUFFER_PRE_PADDING], received_payload.len, LWS_WRITE_TEXT);
