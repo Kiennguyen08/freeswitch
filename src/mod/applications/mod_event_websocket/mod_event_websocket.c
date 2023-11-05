@@ -187,12 +187,12 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 
 static struct lws_protocols protocols[] = {
 	/* The first protocol must always be the HTTP handler */
-	{
-		"http-only",   /* name */
-		callback_http, /* callback */
-		0,			   /* No per session data. */
-		0,			   /* max frame size / rx buffer */
-	},
+	// {
+	// 	"http-only",   /* name */
+	// 	callback_http, /* callback */
+	// 	0,			   /* No per session data. */
+	// 	0,			   /* max frame size / rx buffer */
+	// },
 	{
 		"example-protocol",
 		callback_websocket,
