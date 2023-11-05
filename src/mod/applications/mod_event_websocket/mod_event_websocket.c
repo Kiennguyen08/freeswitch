@@ -223,10 +223,10 @@ static void *event_socket_thread(void *arg)
 
 		// Receive data from the event socket
 		int bytes_received = receive_data(event_socket, buffer, sizeof(buffer));
-		fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
+		// fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
 		if (bytes_received > 0) {
 			// perror("Event socket receive_data() failed");
-
+			fprintf(stdout, "Bytes received from TCP Payload %d\n", bytes_received);
 			// Process and forward the received data to WebSocket clients
 			// Here, you should send the data over WebSocket to the connected clients
 			forward_to_all_clients(buffer);
