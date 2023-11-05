@@ -167,8 +167,10 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
 
+		char *send_data;
+		memcpy(&send_data, in, len);
 		// send_command(event_socket, (char *)&received_payload.data);
-		send_command(event_socket, (char *)in);
+		send_command(event_socket, send_data);
 
 		// Dummy response for testing
 		char response_data[] = "Hello, client!";
