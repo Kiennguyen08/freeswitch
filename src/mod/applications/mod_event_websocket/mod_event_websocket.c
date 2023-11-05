@@ -145,6 +145,35 @@ static int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void
 	return 0;
 }
 
+char *sliceString(const char *original, int start, int length)
+{
+	if (original == NULL || start < 0 || length < 0) { return NULL; }
+
+	// Calculate the length of the original string
+	int originalLength = strlen(original);
+
+	// Ensure the start index is within bounds
+	if (start >= originalLength) { return NULL; }
+
+	// Calculate the number of characters to copy
+	int charsToCopy = (length > (originalLength - start)) ? (originalLength - start) : length;
+
+	// Allocate memory for the new string
+	char *sliced = (char *)malloc(charsToCopy + 1); // +1 for the null terminator
+
+	if (sliced == NULL) {
+		return NULL; // Memory allocation failed
+	}
+
+	// Copy the characters
+	strncpy(sliced, original + start, charsToCopy);
+
+	// Null-terminate the new string
+	sliced[charsToCopy] = '\0';
+
+	return sliced;
+}
+
 static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
 {
 	char client_id[64];
@@ -167,10 +196,10 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		received_payload.len = len;
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Len Receive Data [%lu]", len);
 
-		char *send_data;
-		memcpy(&send_data, in, len);
 		// send_command(event_socket, (char *)&received_payload.data);
-		send_command(event_socket, send_data);
+		char *sliced = sliceString(in, 0, len);
+		send_command(event_socket, sliced);
+		free(sliced);
 
 		// Dummy response for testing
 		char response_data[] = "Hello, client!";
