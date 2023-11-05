@@ -1,4 +1,8 @@
 #include <libwebsockets.h>
+static int callback_http(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
+{
+	return 0;
+}
 
 // Define a callback for handling WebSocket protocol events
 static int callback(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t len)
@@ -26,6 +30,12 @@ static int callback(struct lws *wsi, enum lws_callback_reasons reason, void *use
 }
 
 static struct lws_protocols protocols[] = {
+	// {
+	// 	"http-only",   /* name */
+	// 	callback_http, /* callback */
+	// 	0,			   /* No per session data. */
+	// 	0,			   /* max frame size / rx buffer */
+	// },
 	{
 		"callback-function", callback,
 		0, // No per session data

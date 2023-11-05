@@ -1652,6 +1652,8 @@ static switch_status_t parse_command(listener_t *listener, switch_event_t **even
 
 	*reply = '\0';
 
+	fprintf(stderr, "Raw Command in mod_event_socket %s\n", *event);
+
 	if (!event || !*event || !(cmd = switch_event_get_header(*event, "command"))) {
 		switch_clear_flag_locked(listener, LFLAG_RUNNING);
 		switch_snprintf(reply, reply_len, "-ERR command parse error.");
