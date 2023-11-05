@@ -232,7 +232,6 @@ static int callback_websocket(struct lws *wsi, enum lws_callback_reasons reason,
 		// auto send auth message when ws connetion is established
 		const char *auth_message = "auth ClueCon";
 		send_command(event_socket, auth_message);
-		free(auth_message);
 
 		break;
 	case LWS_CALLBACK_RECEIVE:
